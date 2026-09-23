@@ -2,8 +2,10 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>I can help you - Universal Coding & Web Tutor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <title>I can help you - High-Readability Coding Tutor</title>
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -11,220 +13,342 @@
       theme: {
         extend: {
           fontFamily: {
-            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['"Fira Code"', 'JetBrains Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', 'monospace']
           }
         }
       }
-    }
+    };
   </script>
+  
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
     :root {
       --bg-main: #f8fafc;
       --bg-surface: #ffffff;
       --bg-card: #f1f5f9;
       --border-color: #cbd5e1;
-      --text-main: #0f172a;
+      --text-main: #090d16;
+      --text-muted: #334155;
       --theme-accent: #059669;
       --theme-accent-bg: #10b981;
+      --code-bg: #090d16;
+      --code-text: #e2e8f0;
+      --font-scale: 1rem;
+      --code-font-scale: 1.05rem;
     }
-    html.dark {
-      --bg-main: #020611;
-      --bg-surface: #09101f;
-      --bg-card: #0d1527;
-      --border-color: #1e293b;
-      --text-main: #f8fafc;
-      --theme-accent: #10b981;
-      --theme-accent-bg: #059669;
-    }
-    html[data-theme="ocean"] { --theme-accent: #0284c7; --theme-accent-bg: #0284c7; }
-    html[data-theme="violet"] { --theme-accent: #8b5cf6; --theme-accent-bg: #8b5cf6; }
-    html[data-theme="amber"] { --theme-accent: #f59e0b; --theme-accent-bg: #f59e0b; }
 
-    body { background-color: var(--bg-main); color: var(--text-main); }
+    html.dark {
+      --bg-main: #030712;
+      --bg-surface: #0b1120;
+      --bg-card: #111b2e;
+      --border-color: #1f2f4c;
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --theme-accent: #34d399;
+      --theme-accent-bg: #059669;
+      --code-bg: #000000;
+      --code-text: #f0fdf4;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-size: var(--font-scale);
+      line-height: 1.65;
+      -webkit-tap-highlight-color: transparent;
+      transition: font-size 0.15s ease-out;
+    }
+
     .theme-surface { background-color: var(--bg-surface); }
     .theme-card { background-color: var(--bg-card); }
     .theme-border { border-color: var(--border-color); }
     .theme-accent-text { color: var(--theme-accent); }
     .theme-accent-btn { background-color: var(--theme-accent-bg); }
+
+    .mobile-code-text {
+      font-size: var(--code-font-scale) !important;
+      line-height: 1.75 !important;
+      font-family: 'Fira Code', Consolas, Monaco, monospace;
+    }
+
+    .readable-guide-text {
+      font-size: calc(var(--font-scale) * 1.08) !important;
+      line-height: 1.8 !important;
+    }
+
+    button, select, input, textarea {
+      touch-action: manipulation;
+    }
+    
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-  <!-- Header -->
-  <header class="border-b theme-border theme-surface sticky top-0 z-40 px-4 py-2.5 flex items-center justify-between shadow-sm">
-    <div class="flex items-center gap-3">
-      <div class="h-9 w-9 rounded-xl theme-accent-btn flex items-center justify-center font-bold text-white shadow-md">
-        <i data-lucide="bot-message-square" class="w-5 h-5"></i>
-      </div>
-      <div>
-        <span class="font-extrabold text-base tracking-tight theme-accent-text">I can help you</span>
-        <p class="text-[11px] text-slate-400 leading-none">DSA, C, C++, Java, Python, HTML &amp; CSS Tutor</p>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <!-- Theme Palette -->
-      <div class="relative group">
-        <button class="p-1.5 rounded-lg border theme-border theme-card text-xs flex items-center gap-1.5" title="Pick Theme">
-          <span class="w-3.5 h-3.5 rounded-full theme-accent-btn inline-block"></span>
-          <i data-lucide="palette" class="w-3.5 h-3.5 text-slate-400"></i>
+  <!-- Instructions Modal -->
+  <div id="instructions-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="theme-surface border-2 theme-border rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative flex flex-col gap-5">
+      <div class="flex items-center justify-between border-b theme-border pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl theme-accent-btn flex items-center justify-center text-white shadow-md">
+            <i data-lucide="compass" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-black text-white leading-tight">Quick Setup</h2>
+            <p class="text-xs sm:text-sm text-slate-400 font-semibold">Get ready to code and preview</p>
+          </div>
+        </div>
+        <button onclick="closeInstructionsModal()" class="w-9 h-9 rounded-xl border theme-border flex items-center justify-center text-slate-300 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
         </button>
-        <div class="absolute right-0 mt-1 hidden group-hover:flex flex-col gap-1 p-2 rounded-xl theme-surface border theme-border shadow-xl z-50 w-32">
-          <button onclick="setAccentTheme('emerald')" class="flex items-center gap-2 px-2 py-1 rounded text-xs hover:bg-slate-800">Emerald</button>
-          <button onclick="setAccentTheme('ocean')" class="flex items-center gap-2 px-2 py-1 rounded text-xs hover:bg-slate-800">Ocean</button>
-          <button onclick="setAccentTheme('violet')" class="flex items-center gap-2 px-2 py-1 rounded text-xs hover:bg-slate-800">Violet</button>
-          <button onclick="setAccentTheme('amber')" class="flex items-center gap-2 px-2 py-1 rounded text-xs hover:bg-slate-800">Amber</button>
+      </div>
+
+      <div class="space-y-3.5">
+        <div class="flex items-start gap-3.5 p-3.5 rounded-2xl theme-card border theme-border">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 font-black text-base flex items-center justify-center shrink-0">1</div>
+          <div class="flex-1">
+            <h3 class="font-extrabold text-white text-base">Paste Gemini API Key</h3>
+            <p class="text-sm text-slate-300 leading-snug">Click <strong>AI Key</strong> in the top right and add your key from Google AI Studio.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3.5 p-3.5 rounded-2xl theme-card border theme-border">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 font-black text-base flex items-center justify-center shrink-0">2</div>
+          <div class="flex-1">
+            <h3 class="font-extrabold text-white text-base">Enter Your Prompt</h3>
+            <p class="text-sm text-slate-300 leading-snug">Ask for any algorithm, webpage, or fix. Web output immediately updates the Live Preview tab.</p>
+          </div>
         </div>
       </div>
 
-      <!-- Day/Night Toggle -->
-      <button onclick="toggleDayNightMode()" id="theme-toggle-btn" class="p-1.5 rounded-lg border theme-border theme-card text-slate-400">
-        <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
-      </button>
+      <div class="flex items-center justify-between pt-2 border-t theme-border">
+        <label class="flex items-center gap-2 cursor-pointer text-xs sm:text-sm text-slate-300 select-none">
+          <input type="checkbox" id="dont-show-instructions" class="w-4 h-4 rounded border-slate-600 accent-emerald-500 cursor-pointer">
+          <span>Don't show again</span>
+        </label>
+        <button onclick="closeInstructionsModal()" class="h-12 px-6 rounded-xl theme-accent-btn text-white font-black text-sm sm:text-base shadow-lg active:scale-95 transition">
+          Start Coding
+        </button>
+      </div>
+    </div>
+  </div>
 
-      <!-- Language Selector -->
-      <select id="language-select" onchange="onLanguageChange(this.value)" class="theme-card text-xs rounded-lg px-2.5 py-1.5 border theme-border focus:outline-none">
-        <option value="" selected>Auto Detect Language</option>
-        <option value="c">C</option>
-        <option value="cpp">C++</option>
-        <option value="java">Java</option>
-        <option value="python">Python</option>
-        <option value="javascript">JavaScript</option>
-        <option value="html">HTML</option>
-        <option value="css">CSS</option>
-        <option value="sql">SQL</option>
-      </select>
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-emerald-600 text-white font-bold text-base shadow-2xl transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] flex items-center gap-2">
+    <i data-lucide="check-circle" class="w-5 h-5"></i>
+    <span id="toast-message">Message</span>
+  </div>
 
-      <!-- AI Setup Button -->
-      <button onclick="toggleApiModal()" class="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border theme-border theme-card text-slate-300">
-        <span id="api-status-dot" class="w-2 h-2 rounded-full bg-rose-500"></span>
-        <span>AI Setup</span>
-        <i data-lucide="key" class="w-3 h-3 text-slate-400"></i>
-      </button>
+  <!-- Header -->
+  <header class="border-b theme-border theme-surface sticky top-0 z-40 px-3 sm:px-6 py-3 shadow-md">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl theme-accent-btn flex items-center justify-center font-black text-white shadow-lg shrink-0">
+          <i data-lucide="bot-message-square" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-black text-lg sm:text-2xl tracking-tight theme-accent-text leading-tight">I can help you</h1>
+          <p class="text-xs sm:text-sm text-slate-300 font-semibold tracking-wide">Big-Print Code Tutor</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2.5">
+        <button onclick="openInstructionsModal()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl border theme-border theme-card flex items-center justify-center text-emerald-400 active:scale-90 transition shadow">
+          <i data-lucide="help-circle" class="w-5 h-5"></i>
+        </button>
+        <button onclick="adjustFontSize(-1)" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl border theme-border theme-card flex items-center justify-center font-black text-base text-white active:scale-90 transition shadow">
+          A-
+        </button>
+        <button onclick="adjustFontSize(1)" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl border theme-border theme-card flex items-center justify-center font-black text-base text-white active:scale-90 transition shadow">
+          A+
+        </button>
+        <button onclick="toggleDayNightMode()" id="theme-toggle-btn" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl border theme-border theme-card flex items-center justify-center text-amber-300 active:scale-90 transition shadow">
+          <i data-lucide="moon" id="theme-icon" class="w-5 h-5"></i>
+        </button>
+        <button onclick="toggleApiModal()" class="h-10 sm:h-11 px-3 sm:px-4 rounded-xl border theme-border theme-card flex items-center gap-2 text-white font-bold text-sm sm:text-base active:scale-95 transition shadow">
+          <span id="api-status-dot" class="w-3 h-3 rounded-full bg-rose-500 shrink-0"></span>
+          <span class="hidden xs:inline">AI Key</span>
+          <i data-lucide="key" class="w-4 h-4 text-slate-300"></i>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- Main Body -->
-  <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden">
-    <!-- Left Input Panel -->
-    <section class="lg:col-span-5 border-r theme-border flex flex-col h-auto lg:h-[calc(100vh-57px)] theme-surface overflow-y-auto p-4">
-      <div class="flex items-center justify-between mb-2">
-        <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Enter Coding Question / Code / Error</label>
-        <button onclick="clearWorkspace()" class="text-xs text-slate-400 hover:text-rose-400">Clear</button>
+  <!-- Mobile Nav Buttons -->
+  <nav class="lg:hidden sticky top-[69px] z-30 border-b theme-border theme-surface px-2 py-2">
+    <div class="grid grid-cols-3 gap-1.5 max-w-md mx-auto">
+      <button id="nav-btn-input" onclick="showMobileSection('input')" class="py-3 rounded-xl font-black text-sm text-center flex flex-col items-center justify-center gap-1 transition theme-accent-btn text-white shadow">
+        <i data-lucide="edit-3" class="w-5 h-5"></i>
+        <span>1. Question</span>
+      </button>
+      <button id="nav-btn-code" onclick="showMobileSection('code')" class="py-3 rounded-xl font-bold text-sm text-center flex flex-col items-center justify-center gap-1 transition border theme-border theme-card text-slate-300">
+        <i data-lucide="code-2" class="w-5 h-5"></i>
+        <span>2. Code</span>
+      </button>
+      <button id="nav-btn-tutor" onclick="showMobileSection('tutor')" class="py-3 rounded-xl font-bold text-sm text-center flex flex-col items-center justify-center gap-1 transition border theme-border theme-card text-slate-300">
+        <i data-lucide="book-open" class="w-5 h-5"></i>
+        <span>3. Guide</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Body Grid -->
+  <main class="flex-1 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-0 pb-20 lg:pb-0">
+    
+    <!-- LEFT PANEL: Problem Input -->
+    <section id="panel-input" class="lg:col-span-5 border-b lg:border-b-0 lg:border-r theme-border p-4 sm:p-6 theme-surface flex flex-col gap-4 overflow-y-auto lg:h-[calc(100vh-77px)]">
+      <div class="flex items-center justify-between gap-2">
+        <label for="language-select" class="text-sm sm:text-base font-extrabold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+          <i data-lucide="code" class="w-4 h-4 text-emerald-400"></i> Target Language:
+        </label>
+        <button onclick="clearWorkspace()" class="text-sm font-bold text-rose-400 hover:text-rose-300 active:scale-95 transition py-1 px-3 rounded-lg border border-rose-500/40">
+          Clear All
+        </button>
       </div>
 
-      <textarea 
-        id="problem-input" 
-        rows="8" 
-        class="w-full theme-card border theme-border rounded-xl p-3 text-xs font-mono focus:outline-none focus:border-emerald-500 resize-none placeholder-slate-500"
-        placeholder="Type or paste your problem statement, code to debug, or assignment question here..."
-      ></textarea>
+      <div class="relative">
+        <select id="language-select" onchange="onLanguageChange(this.value)" class="w-full h-12 sm:h-14 px-4 rounded-xl theme-card border-2 theme-border text-base sm:text-lg font-bold text-white focus:outline-none focus:border-emerald-500 appearance-none shadow">
+          <option value="" selected>Auto Detect Language</option>
+          <option value="html">HTML5 + CSS Webpage</option>
+          <option value="css">CSS3 Styling</option>
+          <option value="javascript">JavaScript (Web/Node)</option>
+          <option value="python">Python 3</option>
+          <option value="c">C Language</option>
+          <option value="cpp">C++ (Standard)</option>
+          <option value="java">Java</option>
+          <option value="sql">SQL Query</option>
+        </select>
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+          <i data-lucide="chevron-down" class="w-5 h-5"></i>
+        </div>
+      </div>
 
-      <!-- Error Box -->
-      <div id="error-alert" class="hidden mt-3 p-3 rounded-xl border border-rose-500/50 bg-rose-950/30 text-rose-300 text-xs"></div>
+      <div class="flex flex-col gap-1.5">
+        <label for="problem-input" class="text-sm sm:text-base font-extrabold text-white">
+          Question, Code or Website Specification:
+        </label>
+        <textarea 
+          id="problem-input" 
+          rows="5"
+          class="w-full rounded-2xl theme-card border-2 theme-border p-4 text-base sm:text-lg font-mono text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 leading-relaxed shadow resize-none"
+          placeholder="e.g. 'Build a modern personal portfolio landing page with clean navbar and hero section'"
+        ></textarea>
+      </div>
 
-      <!-- Action Button -->
-      <button onclick="requestAiHelp()" id="solve-btn" class="w-full mt-3 py-3 rounded-xl theme-accent-btn text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 hover:opacity-95 transition">
-        <i data-lucide="sparkles" class="w-4 h-4"></i>
+      <div id="error-alert" class="hidden p-4 rounded-2xl border-2 border-rose-500 bg-rose-950/80 text-rose-200 text-sm sm:text-base font-bold shadow-lg whitespace-pre-line"></div>
+
+      <button onclick="requestAiHelp()" id="solve-btn" class="w-full min-h-[54px] rounded-2xl theme-accent-btn text-white font-black text-base sm:text-xl shadow-xl flex items-center justify-center gap-3 active:scale-[0.98] transition hover:brightness-110">
+        <i data-lucide="sparkles" class="w-6 h-6"></i>
         <span>Solve &amp; Teach My Question</span>
       </button>
 
-      <!-- Commands Bar (Without Viva, Dryrun renamed to Run) -->
-      <div class="grid grid-cols-4 gap-1.5 mt-3">
-        <button onclick="runCommand('explain')" class="py-2 text-xs rounded-lg border theme-border theme-card hover:theme-accent-text transition font-medium">/explain</button>
-        <button onclick="runCommand('algorithm')" class="py-2 text-xs rounded-lg border theme-border theme-card hover:theme-accent-text transition font-medium">/algorithm</button>
-        <button onclick="runCommand('hint')" class="py-2 text-xs rounded-lg border theme-border theme-card hover:theme-accent-text transition font-medium">/hint</button>
-        <button onclick="runCommand('run')" class="py-2 text-xs rounded-lg border theme-border theme-card hover:text-emerald-400 transition font-bold flex items-center justify-center gap-1">
-          <i data-lucide="play" class="w-3 h-3"></i> /run
-        </button>
-        <button onclick="runCommand('debug')" class="col-span-4 py-2 text-xs rounded-lg border theme-border theme-card hover:text-rose-400 transition font-medium flex items-center justify-center gap-1">
-          <i data-lucide="bug" class="w-3 h-3"></i> /debug my code
-        </button>
-      </div>
-
-      <!-- Hints Box -->
-      <div class="mt-4 p-3 rounded-xl border theme-border theme-card">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-semibold text-slate-400 uppercase">Socratic Hint Ladder</span>
-          <span id="hint-counter" class="text-[11px] font-mono">0 of 6</span>
+      <div class="flex flex-col gap-2 pt-1">
+        <span class="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider">Fast Learning Commands</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button onclick="runCommand('explain')" class="h-12 rounded-xl border-2 theme-border theme-card text-white font-bold text-sm sm:text-base active:scale-95 transition flex items-center justify-center">/explain</button>
+          <button onclick="runCommand('algorithm')" class="h-12 rounded-xl border-2 theme-border theme-card text-white font-bold text-sm sm:text-base active:scale-95 transition flex items-center justify-center">/algorithm</button>
+          <button onclick="runCommand('hint')" class="h-12 rounded-xl border-2 theme-border theme-card text-white font-bold text-sm sm:text-base active:scale-95 transition flex items-center justify-center">/hint</button>
+          <button onclick="runCommand('run')" class="h-12 rounded-xl border-2 theme-border theme-card text-emerald-400 font-extrabold text-sm sm:text-base active:scale-95 transition flex items-center justify-center gap-1">
+            <i data-lucide="play" class="w-4 h-4"></i> /run
+          </button>
         </div>
-        <div id="hints-container" class="space-y-2 text-xs text-slate-400">
-          No hints unlocked yet.
-        </div>
-        <button onclick="unlockNextHint()" class="w-full mt-2 py-1.5 border border-dashed theme-border text-xs rounded-lg text-slate-300">
-          Unlock Next Hint
-        </button>
       </div>
     </section>
 
-    <!-- Right Workspace Output Panel -->
-    <section class="lg:col-span-7 flex flex-col h-[calc(100vh-57px)] theme-card overflow-hidden">
-      <!-- Tabs (Live preview hidden by default unless HTML or CSS is selected) -->
-      <div class="border-b theme-border theme-surface px-4 flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-1 text-xs py-1">
-          <button id="tab-btn-editor" onclick="switchMainTab('editor')" class="px-3.5 py-2 font-bold theme-accent-text border-b-2 border-emerald-500 flex items-center gap-1.5">
-            <i data-lucide="code-2" class="w-3.5 h-3.5"></i> Code Studio
+    <!-- RIGHT PANEL: Workspace -->
+    <section id="panel-workspace" class="lg:col-span-7 flex flex-col theme-card lg:h-[calc(100vh-77px)] overflow-hidden">
+      <div class="border-b theme-border theme-surface px-4 py-2 flex items-center justify-between gap-2 overflow-x-auto custom-scroll">
+        <div class="flex items-center gap-2 whitespace-nowrap">
+          <button id="tab-btn-editor" onclick="switchMainTab('editor')" class="h-11 px-4 rounded-xl font-black text-sm sm:text-base theme-accent-text border-b-2 border-emerald-500 flex items-center gap-2 active:scale-95 transition">
+            <i data-lucide="code-2" class="w-5 h-5"></i> Code Studio
           </button>
-          <button id="tab-btn-tutor" onclick="switchMainTab('tutor')" class="px-3.5 py-2 text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Tutor Guide &amp; Algorithm
+          <button id="tab-btn-tutor" onclick="switchMainTab('tutor')" class="h-11 px-4 rounded-xl font-bold text-sm sm:text-base text-slate-300 flex items-center gap-2 active:scale-95 transition">
+            <i data-lucide="book-open" class="w-5 h-5"></i> Tutor Guide
           </button>
-          <button id="tab-btn-preview" onclick="switchMainTab('preview')" class="hidden px-3.5 py-2 text-slate-400 items-center gap-1.5">
-            <i data-lucide="layout" class="w-3.5 h-3.5 text-amber-400"></i> Live Preview (HTML/CSS)
+          <button id="tab-btn-preview" onclick="switchMainTab('preview')" class="hidden h-11 px-4 rounded-xl font-bold text-sm sm:text-base text-amber-400 flex items-center gap-2 active:scale-95 transition">
+            <i data-lucide="layout" class="w-5 h-5"></i> Live Web Preview
           </button>
         </div>
-        <div id="ai-loading" class="hidden items-center gap-2 text-xs theme-accent-text font-mono">
-          <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
-          <span id="ai-loading-text">Writing code in Code Studio...</span>
+
+        <div id="ai-loading" class="hidden items-center gap-2 text-sm sm:text-base theme-accent-text font-mono font-bold shrink-0">
+          <i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i>
+          <span class="hidden sm:inline">Generating...</span>
         </div>
       </div>
 
-      <!-- View: Code Studio (Default Selected View) -->
-      <div id="view-editor" class="flex-1 p-5 overflow-y-auto space-y-3">
-        <div class="flex justify-between items-center text-xs">
+      <!-- VIEW 1: Code Studio -->
+      <div id="view-editor" class="flex-1 p-3 sm:p-5 flex flex-col gap-3 overflow-y-auto">
+        <div class="flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2">
-            <span class="text-slate-400 uppercase font-semibold">Active Code File</span>
-            <span id="typing-indicator" class="hidden text-emerald-400 font-mono text-[11px] animate-pulse">● Writing live...</span>
+            <span class="text-white uppercase font-black text-sm sm:text-base tracking-wide">Pure Solution Code</span>
           </div>
-          <button onclick="copyCode()" class="px-2.5 py-1 border theme-border rounded text-slate-200 flex items-center gap-1 hover:theme-accent-text">
-            <i data-lucide="copy" class="w-3 h-3"></i> Copy Code
+          <button onclick="copyCode()" class="h-11 sm:h-12 px-4 rounded-xl border-2 theme-border theme-surface text-white font-extrabold text-sm sm:text-base flex items-center gap-2 active:scale-95 transition shadow hover:border-emerald-500">
+            <i data-lucide="copy" class="w-4 h-4 text-emerald-400"></i>
+            <span id="copy-btn-text">Copy Code</span>
           </button>
         </div>
-        <pre class="p-4 bg-black/80 rounded-xl font-mono text-xs text-slate-200 overflow-x-auto min-h-[350px]"><code id="code-display">// Your code solution will automatically type here when you ask a question.</code></pre>
+        <pre class="p-4 sm:p-6 bg-black rounded-2xl border-2 border-slate-800 text-emerald-300 overflow-x-auto flex-1 min-h-[360px] custom-scroll mobile-code-text shadow-inner select-all"><code id="code-display">// Your clean solution code will appear here.</code></pre>
       </div>
 
-      <!-- View: Guide & Algorithm -->
-      <div id="view-tutor" class="hidden flex-1 p-6 overflow-y-auto space-y-4">
-        <div id="tutor-content" class="text-xs leading-relaxed text-slate-300 font-sans whitespace-pre-wrap">
-          Awaiting your problem. Enter a question on the left and click "Solve &amp; Teach My Question".
+      <!-- VIEW 2: Tutor Guide -->
+      <div id="view-tutor" class="hidden flex-1 p-4 sm:p-7 overflow-y-auto space-y-4 custom-scroll">
+        <div class="flex items-center justify-between border-b theme-border pb-3">
+          <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <i data-lucide="graduation-cap" class="w-6 h-6 text-emerald-400"></i>
+            <span>Engineering Tutor Guide</span>
+          </h2>
+        </div>
+        <div id="tutor-content" class="readable-guide-text text-white whitespace-pre-wrap font-sans">
+Awaiting your question! 
+
+1. Enter your question or website idea on the left.
+2. Select your language (or leave on Auto Detect).
+3. Tap "Solve &amp; Teach My Question".
         </div>
       </div>
 
-      <!-- View: Web Preview (Only for HTML & CSS) -->
-      <div id="view-preview" class="hidden flex-1 flex flex-col h-full bg-slate-900">
-        <iframe id="web-preview-frame" class="w-full flex-1 border-0 bg-white" sandbox="allow-scripts"></iframe>
+      <!-- VIEW 3: Live Web Preview -->
+      <div id="view-preview" class="hidden flex-1 flex flex-col h-full bg-slate-950 min-h-[400px]">
+        <div class="p-2 border-b theme-border flex items-center justify-between text-xs sm:text-sm text-slate-300 bg-slate-900 font-mono">
+          <span class="flex items-center gap-1.5"><i data-lucide="monitor" class="w-4 h-4 text-amber-400"></i> Live Document Preview</span>
+          <button onclick="renderToPreview()" class="underline text-emerald-400 hover:text-emerald-300 cursor-pointer">Refresh Frame</button>
+        </div>
+        <iframe id="web-preview-frame" sandbox="allow-scripts allow-modals" class="w-full flex-1 border-0 bg-white min-h-[500px]"></iframe>
       </div>
     </section>
   </main>
 
   <!-- API Key Modal -->
-  <div id="api-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="theme-surface border theme-border rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-      <h3 class="font-bold text-base mb-2">Gemini API Key</h3>
-      <p class="text-xs text-slate-400 mb-4">
-        Enter your key from <a href="https://aistudio.google.com/apikey" target="_blank" class="text-emerald-400 underline">aistudio.google.com/apikey</a>. Ensure it starts with <strong>AIzaSy...</strong>.
+  <div id="api-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="theme-surface border-2 theme-border rounded-3xl max-w-md w-full p-5 sm:p-7 shadow-2xl relative flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="key" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-black text-lg sm:text-xl text-white">Gemini API Key</h3>
+        </div>
+        <button onclick="toggleApiModal()" class="w-9 h-9 rounded-xl border theme-border flex items-center justify-center text-slate-300 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-sm sm:text-base text-slate-200 leading-relaxed font-medium">
+        Enter your Google Gemini API key to enable instant solutions and tutor breakdowns:
+        <a href="https://aistudio.google.com/apikey" target="_blank" class="text-emerald-400 underline font-bold block mt-1">aistudio.google.com/apikey</a>
       </p>
-      <input 
-        type="password" 
-        id="custom-api-key-input" 
-        class="w-full theme-card border theme-border rounded-lg px-3 py-2 text-xs font-mono mb-4 text-slate-200 focus:outline-none"
-        placeholder="AIzaSy..."
-      />
-      <div class="flex justify-end gap-2">
-        <button onclick="toggleApiModal()" class="px-3.5 py-1.5 text-xs text-slate-400">Cancel</button>
-        <button onclick="saveApiKey()" class="px-4 py-1.5 text-xs theme-accent-btn text-white font-bold rounded-lg">Save Key</button>
+      <input type="password" id="custom-api-key-input" class="w-full h-14 theme-card border-2 theme-border rounded-xl px-4 text-base font-mono text-white focus:outline-none focus:border-emerald-500" placeholder="AIzaSy..." />
+      <div class="flex gap-2 justify-end pt-2">
+        <button onclick="toggleApiModal()" class="h-12 px-5 rounded-xl border theme-border text-slate-300 font-bold text-sm sm:text-base hover:text-white">Cancel</button>
+        <button onclick="saveApiKey()" class="h-12 px-6 rounded-xl theme-accent-btn text-white font-black text-sm sm:text-base shadow-lg">Save Key</button>
       </div>
     </div>
   </div>
@@ -232,29 +356,148 @@
   <script>
     const state = {
       activeTab: 'editor',
-      hintLevel: 0,
+      mobileSection: 'input',
+      fontZoomStep: 1,
       apiKey: (localStorage.getItem('icanhelpyou_gemini_key') || "").trim(),
       isDark: localStorage.getItem('icanhelpyou_dark') !== 'false',
-      theme: localStorage.getItem('icanhelpyou_theme') || 'emerald'
+      theme: localStorage.getItem('icanhelpyou_theme') || 'emerald',
+      lastCleanCode: ''
     };
 
+    const rootFontSizes = ['14px', '16px', '18.5px', '21px', '24px'];
+    const fontSizes = [
+      { body: '0.92rem', code: '0.98rem' },
+      { body: '1.0rem', code: '1.05rem' },
+      { body: '1.12rem', code: '1.18rem' },
+      { body: '1.25rem', code: '1.30rem' },
+      { body: '1.38rem', code: '1.42rem' }
+    ];
+
     window.addEventListener('DOMContentLoaded', () => {
+      const savedZoom = localStorage.getItem('icanhelpyou_zoom');
+      if (savedZoom !== null) state.fontZoomStep = parseInt(savedZoom, 10);
+      applyFontSize();
+
       document.documentElement.setAttribute('data-theme', state.theme);
       if (state.isDark) document.documentElement.classList.add('dark');
       else document.documentElement.classList.remove('dark');
+
       lucide.createIcons();
       updateApiStatus();
+
       if (state.apiKey) {
         document.getElementById('custom-api-key-input').value = state.apiKey;
       }
+
+      handleResponsiveLayout();
+      window.addEventListener('resize', handleResponsiveLayout);
+
+      if (localStorage.getItem('icanhelpyou_hide_instructions') !== 'true') {
+        openInstructionsModal();
+      }
     });
+
+    function openInstructionsModal() {
+      const modal = document.getElementById('instructions-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeInstructionsModal() {
+      const modal = document.getElementById('instructions-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      const checkbox = document.getElementById('dont-show-instructions');
+      if (checkbox && checkbox.checked) {
+        localStorage.setItem('icanhelpyou_hide_instructions', 'true');
+      }
+    }
+
+    function adjustFontSize(delta) {
+      const nextStep = state.fontZoomStep + delta;
+      if (nextStep >= 0 && nextStep < rootFontSizes.length) {
+        state.fontZoomStep = nextStep;
+        localStorage.setItem('icanhelpyou_zoom', state.fontZoomStep);
+        applyFontSize();
+        showToast(delta > 0 ? "Font Increased (A+)" : "Font Decreased (A-)");
+      }
+    }
+
+    function applyFontSize() {
+      const rootSize = rootFontSizes[state.fontZoomStep] || '16px';
+      document.documentElement.style.fontSize = rootSize;
+      const current = fontSizes[state.fontZoomStep] || fontSizes[1];
+      document.documentElement.style.setProperty('--font-scale', current.body);
+      document.documentElement.style.setProperty('--code-font-scale', current.code);
+    }
+
+    function showMobileSection(sec) {
+      state.mobileSection = sec;
+      const inputPanel = document.getElementById('panel-input');
+      const workspacePanel = document.getElementById('panel-workspace');
+      const btnInput = document.getElementById('nav-btn-input');
+      const btnCode = document.getElementById('nav-btn-code');
+      const btnTutor = document.getElementById('nav-btn-tutor');
+
+      const normalClass = "py-3 rounded-xl font-bold text-sm text-center flex flex-col items-center justify-center gap-1 transition border theme-border theme-card text-slate-300";
+      const activeClass = "py-3 rounded-xl font-black text-sm text-center flex flex-col items-center justify-center gap-1 transition theme-accent-btn text-white shadow";
+
+      btnInput.className = normalClass;
+      btnCode.className = normalClass;
+      btnTutor.className = normalClass;
+
+      if (sec === 'input') {
+        inputPanel.classList.remove('hidden');
+        workspacePanel.classList.add('hidden');
+        btnInput.className = activeClass;
+      } else {
+        inputPanel.classList.add('hidden');
+        workspacePanel.classList.remove('hidden');
+        workspacePanel.classList.add('flex');
+
+        if (sec === 'code') {
+          btnCode.className = activeClass;
+          switchMainTab('editor');
+        } else if (sec === 'tutor') {
+          btnTutor.className = activeClass;
+          switchMainTab('tutor');
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function handleResponsiveLayout() {
+      const isMobile = window.innerWidth < 1024;
+      const inputPanel = document.getElementById('panel-input');
+      const workspacePanel = document.getElementById('panel-workspace');
+
+      if (!isMobile) {
+        inputPanel.classList.remove('hidden');
+        workspacePanel.classList.remove('hidden');
+        workspacePanel.classList.add('flex');
+      } else {
+        showMobileSection(state.mobileSection);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-[-10px]');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-[-10px]');
+      }, 2200);
+    }
 
     function updateApiStatus() {
       const dot = document.getElementById('api-status-dot');
       if (state.apiKey && state.apiKey.length > 20) {
-        dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        dot.className = 'w-3 h-3 rounded-full bg-emerald-400 shrink-0';
       } else {
-        dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+        dot.className = 'w-3 h-3 rounded-full bg-rose-500 shrink-0';
       }
     }
 
@@ -262,27 +505,27 @@
       state.isDark = !state.isDark;
       localStorage.setItem('icanhelpyou_dark', state.isDark);
       document.documentElement.classList.toggle('dark', state.isDark);
-      document.getElementById('theme-icon').setAttribute('data-lucide', state.isDark ? 'moon' : 'sun');
+      const icon = document.getElementById('theme-icon');
+      icon.setAttribute('data-lucide', state.isDark ? 'moon' : 'sun');
       lucide.createIcons();
     }
 
-    function setAccentTheme(t) {
-      state.theme = t;
-      localStorage.setItem('icanhelpyou_theme', t);
-      document.documentElement.setAttribute('data-theme', t);
+    function onLanguageChange(lang) {
+      checkPreviewAvailability(lang, state.lastCleanCode);
     }
 
-    function onLanguageChange(lang) {
+    function checkPreviewAvailability(lang, code) {
       const previewTab = document.getElementById('tab-btn-preview');
-      if (lang === 'html' || lang === 'css') {
+      const hasHtmlLike = code && (code.includes('<html') || code.includes('<!DOCTYPE') || code.includes('<div') || code.includes('<body') || code.includes('<style'));
+      const isWebLang = lang === 'html' || lang === 'css';
+
+      if (isWebLang || hasHtmlLike) {
         previewTab.classList.remove('hidden');
         previewTab.classList.add('flex');
       } else {
         previewTab.classList.add('hidden');
         previewTab.classList.remove('flex');
-        if (state.activeTab === 'preview') {
-          switchMainTab('editor');
-        }
+        if (state.activeTab === 'preview') switchMainTab('editor');
       }
     }
 
@@ -292,12 +535,16 @@
         const btn = document.getElementById(`tab-btn-${tab}`);
         const view = document.getElementById(`view-${tab}`);
         if (!btn || !view) return;
+
         if (tab === t) {
-          btn.className = 'px-3.5 py-2 font-bold theme-accent-text border-b-2 border-emerald-500 flex items-center gap-1.5';
+          btn.className = 'h-11 px-4 rounded-xl font-black text-sm sm:text-base theme-accent-text border-b-2 border-emerald-500 flex items-center gap-2 active:scale-95 transition';
           view.classList.remove('hidden');
-          if (tab === 'preview') view.classList.add('flex');
+          if (tab === 'preview') {
+            view.classList.add('flex');
+            renderToPreview();
+          }
         } else {
-          btn.className = 'px-3.5 py-2 text-slate-400 flex items-center gap-1.5';
+          btn.className = 'h-11 px-4 rounded-xl font-bold text-sm sm:text-base text-slate-300 flex items-center gap-2 active:scale-95 transition';
           view.classList.add('hidden');
           if (tab === 'preview') view.classList.remove('flex');
         }
@@ -307,18 +554,19 @@
 
     function clearWorkspace() {
       document.getElementById('problem-input').value = '';
-      document.getElementById('tutor-content').textContent = 'Awaiting your problem. Enter a question on the left and click "Solve & Teach My Question".';
-      document.getElementById('code-display').textContent = '// Your code solution will automatically type here when you ask a question.';
+      document.getElementById('tutor-content').textContent = 'Awaiting your question. Enter a problem on the left and click "Solve & Teach My Question".';
+      document.getElementById('code-display').textContent = '// Your clean solution code will appear here.';
       document.getElementById('web-preview-frame').srcdoc = '';
       document.getElementById('error-alert').classList.add('hidden');
-      document.getElementById('hints-container').textContent = 'No hints unlocked yet.';
-      state.hintLevel = 0;
-      document.getElementById('hint-counter').textContent = '0 of 6';
+      state.lastCleanCode = '';
+      checkPreviewAvailability('', '');
+      showToast("Workspace Cleared");
     }
 
     function toggleApiModal() {
-      document.getElementById('api-modal').classList.toggle('hidden');
-      document.getElementById('api-modal').classList.toggle('flex');
+      const modal = document.getElementById('api-modal');
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
     }
 
     function saveApiKey() {
@@ -328,131 +576,126 @@
       updateApiStatus();
       toggleApiModal();
       document.getElementById('error-alert').classList.add('hidden');
+      showToast("API Key Saved Successfully");
     }
 
     function copyCode() {
-      navigator.clipboard.writeText(document.getElementById('code-display').textContent);
-      const btn = event.currentTarget;
-      btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Copied!`;
-      lucide.createIcons();
-      setTimeout(() => {
-        btn.innerHTML = `<i data-lucide="copy" class="w-3 h-3"></i> Copy Code`;
-        lucide.createIcons();
-      }, 2000);
+      const code = state.lastCleanCode || document.getElementById('code-display').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btnText = document.getElementById('copy-btn-text');
+        btnText.textContent = "Copied!";
+        showToast("Code Copied to Clipboard!");
+        setTimeout(() => { btnText.textContent = "Copy Code"; }, 2000);
+      });
     }
 
     function runCommand(cmd) {
       if (cmd === 'run') {
         const lang = document.getElementById('language-select').value;
-        if (lang === 'html' || lang === 'css') {
+        const isWeb = lang === 'html' || lang === 'css' || (state.lastCleanCode && state.lastCleanCode.includes('<'));
+        if (isWeb) {
           switchMainTab('preview');
-        } else {
-          switchMainTab('editor');
+          renderToPreview();
+          return;
         }
-        requestAiHelp(`/run simulation`);
+      }
+      requestAiHelp(`/${cmd}`);
+    }
+
+    function renderToPreview() {
+      const frame = document.getElementById('web-preview-frame');
+      if (!frame) return;
+
+      const code = state.lastCleanCode || document.getElementById('code-display').textContent || '';
+      const lang = document.getElementById('language-select').value;
+
+      if (!code || code.startsWith('// Your clean solution code')) {
+        frame.srcdoc = `<!DOCTYPE html><html><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:80vh;color:#64748b;text-align:center;"><div><h3>No web code generated yet</h3><p>Enter an HTML/CSS question to preview the result here.</p></div></body></html>`;
+        return;
+      }
+
+      if (lang === 'css' || (!code.includes('<html') && !code.includes('<!DOCTYPE') && !code.includes('<body'))) {
+        if (lang === 'css' || (code.includes('{') && code.includes('}'))) {
+          frame.srcdoc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${code}</style></head><body style="font-family:system-ui,sans-serif;padding:30px;background:#f8fafc;"><h2>CSS Style Preview</h2><div class="card" style="padding:20px;border-radius:12px;background:white;box-shadow:0 4px 6px rgba(0,0,0,0.1);"><button class="btn">Styled Button</button></div></body></html>`;
+        } else {
+          frame.srcdoc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><script src="https://cdn.tailwindcss.com"><\/script></head><body style="padding:20px;font-family:sans-serif;">${code}</body></html>`;
+        }
       } else {
-        requestAiHelp(`/${cmd}`);
+        frame.srcdoc = code;
       }
-    }
-
-    function unlockNextHint() {
-      if (state.hintLevel < 6) {
-        state.hintLevel++;
-        document.getElementById('hint-counter').textContent = `${state.hintLevel} of 6`;
-        requestAiHelp(`/hint level ${state.hintLevel}`);
-      }
-    }
-
-    function typeCodeIntoStudio(cleanCode, callback) {
-      const codeElement = document.getElementById('code-display');
-      const indicator = document.getElementById('typing-indicator');
-      codeElement.textContent = "";
-      indicator.classList.remove('hidden');
-
-      let index = 0;
-      const step = Math.max(1, Math.floor(cleanCode.length / 80));
-
-      function type() {
-        if (index < cleanCode.length) {
-          codeElement.textContent += cleanCode.slice(index, index + step);
-          index += step;
-          setTimeout(type, 12);
-        } else {
-          codeElement.textContent = cleanCode;
-          indicator.classList.add('hidden');
-          if (callback) callback();
-        }
-      }
-      type();
     }
 
     function generateSmartOfflineResponse(q, lang) {
-      const isDigits = q.toLowerCase().includes('digit') || q.toLowerCase().includes('sum');
-      const isHtml = lang === 'html' || lang === 'css' || q.toLowerCase().includes('card') || q.toLowerCase().includes('html');
+      const isWeb = lang === 'html' || lang === 'css' || q.toLowerCase().includes('website') || q.toLowerCase().includes('html');
 
       let code = "";
-      if (isHtml) {
+      if (isWeb) {
         code = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0; min-height: 100vh; display: flex;
-      justify-content: center; align-items: center;
-      background: #0f172a; font-family: sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0b1120;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
-    .card {
-      background: #1e293b; color: #f8fafc; padding: 24px;
-      border-radius: 16px; text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-width: 300px;
+    .container {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 32px;
+      max-width: 480px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     }
-    .btn {
-      background: #10b981; color: #020611; border: none;
-      padding: 10px 24px; border-radius: 8px; font-weight: bold;
-      cursor: pointer; margin-top: 12px;
+    h1 { color: #34d399; font-size: 24px; margin-bottom: 12px; }
+    p { color: #94a3b8; font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
+    .action-btn {
+      background: #059669;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Interactive Card</h2>
-    <p>Centered using modern CSS Flexbox layout.</p>
-    <button class="btn">Click Action</button>
+  <div class="container">
+    <h1>Layout for: ${q}</h1>
+    <p>Live AI was unavailable; here is a starter template aligned with your request.</p>
+    <button class="action-btn">Action Button</button>
   </div>
 </body>
 </html>`;
-      } else if (lang === 'python') {
-        code = `def solve(n):\n    # Extract and sum digits\n    total = 0\n    n = abs(n)\n    while n > 0:\n        total += n % 10\n        n //= 10\n    return total\n\n# Verification\nnum = 1234\nprint(f"Result for {num}: {solve(num)}")`;
-      } else if (lang === 'cpp' || lang === 'c') {
-        code = `#include <iostream>\n#include <cstdlib>\n\nint solve(int n) {\n    int sum = 0;\n    n = std::abs(n);\n    while (n > 0) {\n        sum += n % 10; // Extract last digit\n        n /= 10;       // Discard last digit\n    }\n    return sum;\n}\n\nint main() {\n    int num = 1234;\n    std::cout << "Sum of digits: " << solve(num) << "\\n";\n    return 0;\n}`;
       } else {
-        code = `public class Solution {\n    public static int solve(int n) {\n        int sum = 0;\n        n = Math.abs(n);\n        while (n > 0) {\n            sum += n % 10;\n            n /= 10;\n        }\n        return sum;\n    }\n    public static void main(String[] args) {\n        System.out.println("Result: " + solve(1234));\n    }\n}`;
+        code = `// Solution generated for: ${q}
+// Language: ${lang || 'Default'}
+
+function solution() {
+    console.log("Processing: ${q.replace(/"/g, "'")}");
+}
+
+solution();`;
       }
 
-      const explanation = `### 1. Problem Breakdown
-- **Goal**: ${isDigits ? "Calculate the sum of individual digits in an integer." : q}
-- **Input**: Value $N$
-- **Approach**: Modulo 10 extracts the last digit, while integer division by 10 discards it.
+      const explanation = `1. PROBLEM BREAKDOWN
+- Target: ${q}
+- Note: Provided via fallback. Check your Gemini API Key in the top right.
 
----
-
-### 2. Algorithm & Invariants
-1. Initialize \`sum = 0\`
-2. Take \`n % 10\` and add to \`sum\`
-3. Update \`n = n / 10\`
-4. Repeat while \`n > 0\`
-- **Time Complexity**: $O(\\log_{10} n)$
-- **Space Complexity**: $O(1)$
-
----
-
-### 3. Step-by-Step Dry Run (Input: 1234)
-- Step 1: \`1234 % 10 = 4\` -> \`sum = 4\` -> \`n = 123\`
-- Step 2: \`123 % 10 = 3\` -> \`sum = 7\` -> \`n = 12\`
-- Step 3: \`12 % 10 = 2\` -> \`sum = 9\` -> \`n = 1\`
-- Step 4: \`1 % 10 = 1\` -> \`sum = 10\` -> \`n = 0\` (Terminates)
-- **Final Result**: \`10\``;
+2. STRUCTURE
+- Clean starter layout corresponding to your prompt specifications.`;
 
       return { explanation, code };
     }
@@ -463,14 +706,14 @@
       errBox.classList.add('hidden');
 
       if (!q) {
-        errBox.textContent = "Please enter a question or problem statement first!";
+        errBox.textContent = "Please enter your question or coding problem first!";
         errBox.classList.remove('hidden');
         return;
       }
 
       const cleanKey = (state.apiKey || '').trim();
       if (!cleanKey) {
-        errBox.textContent = "Gemini API Key missing! Click 'AI Setup' at top-right and paste your key.";
+        errBox.textContent = "Gemini API Key is missing! Click 'AI Key' at the top right to paste your free key.";
         errBox.classList.remove('hidden');
         toggleApiModal();
         return;
@@ -480,117 +723,125 @@
       spinner.classList.remove('hidden');
       spinner.classList.add('flex');
 
-      // Auto-switch to Code Studio tab
-      switchMainTab('editor');
+      if (window.innerWidth < 1024) {
+        showMobileSection('code');
+      } else {
+        switchMainTab('editor');
+      }
 
-      const lang = document.getElementById('language-select').value || 'c';
-      const promptText = `You are "I can help you", an engineering coding tutor.
-Solve this problem for an engineering student in ${lang}:
+      const lang = document.getElementById('language-select').value || 'html';
+      const promptText = `You are "I can help you", a dedicated computer engineering tutor.
+Solve the following user question in ${lang}:
 "${q}"
 
 CRITICAL FORMAT REQUIREMENT:
-You MUST output your response in this exact order:
-1. First, provide ONLY the complete, working, beginner-friendly code inside triple backticks:
+1. Provide the complete, working code inside a single markdown code block:
 \`\`\`${lang}
-// complete solution code here
+// complete solution code
 \`\`\`
 
-2. Second, provide the detailed explanation with headings:
+2. Immediately follow the code block with a clear tutor breakdown:
 ### 1. Problem Breakdown
-### 2. Algorithm & Invariants
-### 3. Step-by-Step Dry Run
-### 4. Complexity Analysis`;
+(Explain what the user specifically asked for in: ${q})
+
+### 2. Architecture / Algorithm
+(Explain the design and logic used)
+
+### 3. Execution / Walkthrough
+(Walk through how the code works)
+
+### 4. Complexity / Rendering Notes
+(Detail performance considerations)`;
 
       const payload = {
-        contents: [
-          {
-            parts: [{ text: cmd ? `${cmd} for: ${q}\n\n${promptText}` : promptText }]
-          }
-        ]
+        contents: [{
+          parts: [{ text: cmd ? `${cmd} for question: "${q}"\n\n${promptText}` : promptText }]
+        }]
       };
 
       let finalCode = "";
       let finalExplanation = "";
       let foundOnline = false;
+      let lastErrorMessage = "";
 
+      // List of supported production endpoints
+      let candidateModels = ['gemini-2.5-flash', 'gemini-2.0-flash'];
+
+      // Attempt to dynamically fetch active models for the user's key
       try {
-        let activeModels = [];
-        try {
-          const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
+        const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
+        if (listRes.ok) {
           const listData = await listRes.json();
-          if (listData.models && Array.isArray(listData.models)) {
-            activeModels = listData.models
-              .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
-              .map(m => m.name.replace('models/', ''));
-          }
-        } catch (e) {}
-
-        const candidateModels = activeModels.length > 0 ? activeModels : ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
-
-        for (const m of candidateModels) {
-          if (m.includes('embedding') || m.includes('aqa') || m.includes('imagen')) continue;
-
-          try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cleanKey}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-
-            const data = await res.json();
-            if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-              const text = data.candidates[0].content.parts[0].text;
-              
-              // Extract the code block strictly
-              const codeRegex = /```(?:[a-zA-Z0-9_\-\+]+)?\n([\s\S]*?)```/;
-              const match = text.match(codeRegex);
-
-              if (match && match[1]) {
-                finalCode = match[1].trim();
-                // Put the text excluding the code block into the Tutor Guide
-                finalExplanation = text.replace(match[0], '').trim();
-              } else {
-                finalCode = text;
-                finalExplanation = text;
-              }
-
-              foundOnline = true;
-              break;
+          if (listData.models && listData.models.length > 0) {
+            const available = listData.models
+              .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent"))
+              .map(m => m.name.replace("models/", ""));
+            if (available.length > 0) {
+              candidateModels = available;
             }
-          } catch (err) {}
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        // Continue with default fallback candidate models
+      }
 
-      // Fallback if network drops or capacity limits occur
-      if (!foundOnline) {
-        const local = generateSmartOfflineResponse(q, lang);
-        finalExplanation = local.explanation;
-        finalCode = local.code;
+      for (const m of candidateModels) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${cleanKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await res.json();
+
+          if (data.error) {
+            lastErrorMessage = data.error.message || JSON.stringify(data.error);
+            continue;
+          }
+
+          if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+            const fullText = data.candidates[0].content.parts[0].text;
+            const codeRegex = /```(?:[a-zA-Z0-9_\-\+]+)?\n([\s\S]*?)```/;
+            const match = fullText.match(codeRegex);
+
+            if (match && match[1]) {
+              finalCode = match[1].trim();
+              finalExplanation = fullText.replace(match[0], '').trim();
+            } else {
+              finalCode = fullText;
+              finalExplanation = "Solution generated. See pure code in Code Studio.";
+            }
+
+            foundOnline = true;
+            break;
+          }
+        } catch (err) {
+          lastErrorMessage = err.message;
+        }
       }
 
       spinner.classList.add('hidden');
       spinner.classList.remove('flex');
 
-      // Populate Tutor Guide with algorithm & breakdown
-      document.getElementById('tutor-content').innerHTML = `
-        <div class="space-y-4">
-          <div class="text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap">${finalExplanation}</div>
-        </div>
-      `;
-
-      // Type pure code into Code Studio
-      // Type pure code into Code Studio
-      typeCodeIntoStudio(finalCode, () => {
-        const selectedLang = document.getElementById('language-select').value;
-        const frame = document.getElementById('web-preview-frame');
-        
-        // ONLY feed code to preview if language is explicitly HTML or CSS
-        if (frame && (selectedLang === 'html' || selectedLang === 'css')) {
-          frame.srcdoc = finalCode;
-        } else if (frame) {
-          frame.srcdoc = ''; // Keep preview clean and inactive for C/C++/Java/Python
+      if (!foundOnline) {
+        if (lastErrorMessage) {
+          errBox.textContent = `API Error: ${lastErrorMessage}\nShowing starter template for your prompt instead.`;
+          errBox.classList.remove('hidden');
         }
-      });
+        const local = generateSmartOfflineResponse(q, lang);
+        finalExplanation = local.explanation;
+        finalCode = local.code;
+      }
+
+      state.lastCleanCode = finalCode;
+      document.getElementById('code-display').textContent = finalCode;
+      document.getElementById('tutor-content').textContent = finalExplanation;
+
+      checkPreviewAvailability(lang, finalCode);
+      renderToPreview();
+
+      showToast("Solution & Tutor Guide Ready!");
     }
   </script>
 </body>
